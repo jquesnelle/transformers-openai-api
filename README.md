@@ -1,6 +1,6 @@
 # transformers-openai-api
 
-`transformers-openai-api` is a server for serving locally running [transformers](https://github.com/huggingface/transformers/) models via the [OpenAI Completions API](https://beta.openai.com/docs/api-reference/completions). In short, you can run any `transformers` model and offer it through an API compatible with existing OpenAI tooling such as the [OpenAI Python Client](https://github.com/openai/openai-python) itself or any package that uses it (e.g. [LangChain](https://github.com/hwchase17/langchain)).
+`transformers-openai-api` is a server for hosting locally running NLP [transformers](https://github.com/huggingface/transformers/) models via the [OpenAI Completions API](https://beta.openai.com/docs/api-reference/completions). In short, you can run `transformers` models and offer them through an API compatible with existing OpenAI tooling such as the [OpenAI Python Client](https://github.com/openai/openai-python) itself or any package that uses it (e.g. [LangChain](https://github.com/hwchase17/langchain)).
 
 ## Quickstart
 
