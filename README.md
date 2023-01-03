@@ -4,12 +4,22 @@
 
 ## Quickstart
 
-# From source
+### From pip
+
+```sh
+pip install transformers-openai-api
+wget https://raw.githubusercontent.com/jquesnelle/transformers-openai-api/master/config.example.json
+mv config.example.json config.json
+transformers-openai-api
+```
+
+### From source
+
 ```sh
 git clone https://github.com/jquesnelle/transformers-openai-api
 cd transformers-openai-api
 cp config.example.json config.json
-python src/
+python transformers_openai_api/
 ```
 
 ## Using with OpenAI Python Client

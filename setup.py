@@ -11,6 +11,11 @@ setup(
         'transformers',
         'accelerate',
         'torch',
-        'waitress'
-    ]
+        'Flask'
+    ],
+    entry_points={
+        'console_scripts': [
+            'transformers-openai-api = transformers_openai_api.__main__:main'
+        ]
+    }
 )
