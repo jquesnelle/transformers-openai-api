@@ -1,7 +1,6 @@
 import json
 import time
 import torch
-from types import NoneType
 from typing import Any, Callable, Mapping, Union
 from flask import Flask, make_response, request
 from flask.json import jsonify
@@ -31,7 +30,7 @@ def check_token(f: Callable):
     return decorator
 
 
-def convert_model_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[str, Any]:
+def convert_model_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
     config = {}
     if val is not None:
         for key, value in val.items():
@@ -50,11 +49,11 @@ def convert_model_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[str
     return config
 
 
-def convert_tokenizer_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[str, Any]:
+def convert_tokenizer_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
     return val if val is not None else {}
 
 
-def convert_generate_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[str, Any]:
+def convert_generate_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
     config = {}
     if val is not None:
         for key, value in val.items():
@@ -65,7 +64,7 @@ def convert_generate_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[
     return config
 
 
-def convert_decode_config(val: Union[Mapping[str, Any], NoneType]) -> Mapping[str, Any]:
+def convert_decode_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
     return val if val is not None else {}
 
 
