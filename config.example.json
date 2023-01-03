@@ -1,7 +1,6 @@
 {
     "MODELS": {
         "text-davinci-003": {
-            "ENABLED": false,
             "NAME": "google/flan-t5-base",
             "TYPE": "Seq2Seq",
             "MODEL_CONFIG": {
