@@ -116,9 +116,9 @@ def make_transformers_openai_api(config_path: str) -> Flask:
     app.config.from_file(config_path, load=json.load)
 
     for mapping, config in app.config['MODELS'].items():
-        model_config = convert_model_config(config.get('MODEL_CONFIG'))
-        if model_config.get('ENABLED', True) == False:
+        if config.get('ENABLED', True) == False:
             continue
+        model_config = convert_model_config(config.get('MODEL_CONFIG'))
         tokenizer_config = convert_tokenizer_config(
             config.get('TOKENIZER_CONFIG'))
         generate_config = convert_generate_config(
