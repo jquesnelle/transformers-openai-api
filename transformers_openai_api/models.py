@@ -29,9 +29,9 @@ def _completions_auto(
     if ('top_p' in generate_args or 'top_k' in generate_args or 'temperature' in generate_args) and 'do_sample' not in generate_args:
         generate_args['do_sample'] = True
         if generate_args.get('temperature', 1.0) == 0:
-            del generate_args['temperature']
+            generate_args.pop('temperature', None)
         elif generate_args.get('top_p', 1.0) == 1.0:
-            del generate_args['top_p']
+            generate_args.pop('top_p', None)
         if 'top_k' not in generate_args:
             generate_args['top_k'] = 0
 
