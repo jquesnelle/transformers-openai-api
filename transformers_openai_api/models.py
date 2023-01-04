@@ -39,14 +39,14 @@ def _completions_auto(
     echo = generate_args.get('echo', False)
     n = generate_args.get('n', 1)
 
-    del generate_args['model']
-    del generate_args['prompt']
-    del generate_args['n']
+    generate_args.pop('model', None)
+    generate_args.pop('prompt', None)
+    generate_args.pop('n', None)
 
     # TODO
-    del generate_args['best_of']
-    del generate_args['presence_penalty']
-    del generate_args['frequency_penalty']
+    generate_args.pop('best_of', None)
+    generate_args.pop('presence_penalty', None)
+    generate_args.pop('frequency_penalty', None)
 
     inputs = []
     prompt_tokens_count = 0
