@@ -56,3 +56,13 @@ The `MODELS` object handles mapping an OpenAI model name to a `transformers` mod
 | `TOKENIZIER_CONFIG` | Parameters for tokenizer creation; passed to `AutoTokenizer.from_pretrained` |
 | `GENERATE_CONFIG` | Parameters for generation; passed to the model's `generate` function |
 | `DECODE_CONFIG` | Parameters for decoding; passed to the tokenizer's `decode` function |
+
+
+### Authorization
+
+To limit access to the API (i.e. enforcing `OPENAI_API_KEY`), fill in the `BEARER_TOKENS` object with a list of authorized tokens (e.g. your OpenAI key). If the `BEARER_TOKENS` list does not exist, no authorization will be enforced.
+```json
+{
+    "BEARER_TOKENS": ["sk-..."]
+}
+```
