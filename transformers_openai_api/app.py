@@ -1,16 +1,17 @@
 import json
 import time
 import torch
-from typing import Any, Callable, Mapping, Union
-from flask import Flask, make_response, request
+from typing import Any, Callable, Mapping, Optional
+from flask import Flask, make_response, request, abort
 from flask.json import jsonify
 from functools import wraps
 from .models import CausalLM, Model, Seq2Seq
+from .metrics import Metrics
 
 app = Flask(__name__)
 models = {}
 id = 0
-
+metrics: Optional[Metrics]
 
 def check_token(f: Callable):
     @wraps(f)
@@ -30,7 +31,7 @@ def check_token(f: Callable):
     return decorator
 
 
-def convert_model_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
+def convert_model_config(val: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
     config = {}
     if val is not None:
         for key, value in val.items():
@@ -49,11 +50,11 @@ def convert_model_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, An
     return config
 
 
-def convert_tokenizer_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
+def convert_tokenizer_config(val: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
     return val if val is not None else {}
 
 
-def convert_generate_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
+def convert_generate_config(val: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
     config = {}
     if val is not None:
         for key, value in val.items():
@@ -64,7 +65,7 @@ def convert_generate_config(val: Union[Mapping[str, Any], None]) -> Mapping[str,
     return config
 
 
-def convert_decode_config(val: Union[Mapping[str, Any], None]) -> Mapping[str, Any]:
+def convert_decode_config(val: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
     return val if val is not None else {}
 
 
@@ -83,8 +84,11 @@ def completion(model_name: str):
         'id': f'cmpl-{this_id}'
     })
 
-    return make_response(jsonify(response))
+    global metrics
+    if metrics is not None:
+        metrics.update(response)
 
+    return make_response(jsonify(response))
 
 @app.route('/v1/engines')
 def v1_engines():
@@ -111,9 +115,20 @@ def v1_completions():
 def engine_completion(model_name: str):
     return completion(model_name)
 
+@app.route('/v1/metrics')
+def metrics_():
+    global metrics
+    if metrics is None:
+        abort(404)
+
+    return make_response(jsonify(metrics.get()))
 
 def make_transformers_openai_api(config_path: str) -> Flask:
     app.config.from_file(config_path, load=json.load)
+
+    if app.config.get('METRICS', 1) != 0:
+        global metrics
+        metrics = Metrics()
 
     for mapping, config in app.config['MODELS'].items():
         if config.get('ENABLED', True) == False:
