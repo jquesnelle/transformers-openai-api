@@ -19,6 +19,7 @@ transformers-openai-api
 git clone https://github.com/jquesnelle/transformers-openai-api
 cd transformers-openai-api
 cp config.example.json config.json
+pip install -r requirements.txt
 python transformers_openai_api/
 ```
 
