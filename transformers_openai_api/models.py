@@ -1,7 +1,14 @@
 from abc import ABC
 from typing import Any, List, Mapping
+import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+logger.info(f" you are using {device} on this server")
 
 def get_prompts(request: Mapping[str, Any]) -> List[str]:
     prompt = request['prompt']
@@ -51,7 +58,7 @@ def _completions_auto(
     inputs = []
     prompt_tokens_count = 0
     for prompt in prompts:
-        input = tokenizer(prompt, return_tensors="pt").input_ids.to("cuda")
+        input = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         prompt_tokens_count += input.size(dim=1)
         inputs.append(input)
 
@@ -99,7 +106,7 @@ class Seq2Seq(Model):
             generate_config: Mapping[str, Any],
             decode_config: Mapping[str, Any]) -> None:
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            pretrained_model_name_or_path, **model_config).to("cuda")
+            pretrained_model_name_or_path, **model_config).to(device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             pretrained_model_name_or_path, **tokenizer_config)
         self.generate_config = generate_config
@@ -123,7 +130,7 @@ class CausalLM(Model):
             generate_config: Mapping[str, Any],
             decode_config: Mapping[str, Any]) -> None:
         self.model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path, **model_config).to("cuda")
+            pretrained_model_name_or_path, **model_config).to(device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             pretrained_model_name_or_path, **tokenizer_config)
         self.generate_config = generate_config
