@@ -1,14 +1,15 @@
+import logging
+import torch
+
 from abc import ABC
 from typing import Any, List, Mapping
-import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM
 
-import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-logger.info(f" you are using {device} on this server")
+logger.info(f"Inference device: {device}")
 
 def get_prompts(request: Mapping[str, Any]) -> List[str]:
     prompt = request['prompt']
