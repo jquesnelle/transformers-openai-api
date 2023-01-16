@@ -13,6 +13,7 @@ models = {}
 id = 0
 metrics: Optional[Metrics]
 
+
 def check_token(f: Callable):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -90,6 +91,7 @@ def completion(model_name: str):
 
     return make_response(jsonify(response))
 
+
 @app.route('/v1/engines')
 def v1_engines():
     return make_response(jsonify({
@@ -115,6 +117,7 @@ def v1_completions():
 def engine_completion(model_name: str):
     return completion(model_name)
 
+
 @app.route('/v1/metrics')
 def metrics_():
     global metrics
@@ -122,6 +125,7 @@ def metrics_():
         abort(404)
 
     return make_response(jsonify(metrics.get()))
+
 
 def make_transformers_openai_api(config_path: str) -> Flask:
     app.config.from_file(config_path, load=json.load)
@@ -134,18 +138,20 @@ def make_transformers_openai_api(config_path: str) -> Flask:
         if config.get('ENABLED', True) == False:
             continue
         model_config = convert_model_config(config.get('MODEL_CONFIG'))
+        model_device = config.get('MODEL_DEVICE', 'cuda')
         tokenizer_config = convert_tokenizer_config(
             config.get('TOKENIZER_CONFIG'))
+        tokenizer_device = config.get('TOKENIZER_DEVICE', 'cuda')
         generate_config = convert_generate_config(
             config.get('GENERATE_CONFIG'))
         decode_config = convert_decode_config(
             config.get('DECODE_CONFIG'))
         if config['TYPE'] == 'Seq2Seq':
             models[mapping] = Seq2Seq(
-                config['NAME'], model_config, tokenizer_config, generate_config, decode_config)
+                config['NAME'], model_config, model_device, tokenizer_config, tokenizer_device, generate_config, decode_config)
         elif config['TYPE'] == 'CausalLM':
             models[mapping] = CausalLM(
-                config['NAME'], model_config, tokenizer_config, generate_config, decode_config)
+                config['NAME'], model_config, model_device, tokenizer_config, tokenizer_device, generate_config, decode_config)
         else:
             raise RuntimeError(f'Unknown model type {config["TYPE"]}')
 

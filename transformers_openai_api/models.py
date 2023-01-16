@@ -1,15 +1,7 @@
-import logging
-import torch
-
 from abc import ABC
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Optional
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-logger.info(f"Inference device: {device}")
 
 def get_prompts(request: Mapping[str, Any]) -> List[str]:
     prompt = request['prompt']
@@ -21,6 +13,7 @@ def get_prompts(request: Mapping[str, Any]) -> List[str]:
 def _completions_auto(
         request: Mapping[str, Any],
         tokenizer: Any,
+        tokenizer_device: Optional[str],
         model: Any,
         generate_config: Mapping[str, Any],
         decode_config: Mapping[str, Any],
@@ -60,7 +53,9 @@ def _completions_auto(
     inputs = []
     prompt_tokens_count = 0
     for prompt in prompts:
-        input = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
+        input = tokenizer(prompt, return_tensors="pt").input_ids
+        if tokenizer_device is not None:
+            input = input.to(tokenizer_device)
         prompt_tokens_count += input.size(dim=1)
         inputs.append(input)
 
@@ -99,23 +94,29 @@ class Seq2Seq(Model):
     tokenizer: AutoTokenizer
     generate_config: Mapping[str, Any]
     decode_config: Mapping[str, Any]
+    tokenizer_device: Optional[str]
 
     def __init__(
             self,
             pretrained_model_name_or_path: str,
             model_config: Mapping[str, Any],
+            model_device: Optional[str],
             tokenizer_config: Mapping[str, Any],
+            tokenizer_device: Optional[str],
             generate_config: Mapping[str, Any],
             decode_config: Mapping[str, Any]) -> None:
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            pretrained_model_name_or_path, **model_config).to(device)
+            pretrained_model_name_or_path, **model_config)
+        if model_device is not None:
+            self.model = self.model.to(model_device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             pretrained_model_name_or_path, **tokenizer_config)
         self.generate_config = generate_config
         self.decode_config = decode_config
+        self.tokenizer_device = tokenizer_device
 
     def completions(self, request) -> List[str]:
-        return _completions_auto(request, self.tokenizer, self.model, self.generate_config, self.decode_config, False)
+        return _completions_auto(request, self.tokenizer, self.tokenizer_device, self.model, self.generate_config, self.decode_config, False)
 
 
 class CausalLM(Model):
@@ -123,20 +124,26 @@ class CausalLM(Model):
     tokenizer: AutoTokenizer
     generate_config: Mapping[str, Any]
     decode_config: Mapping[str, Any]
+    tokenizer_device: Optional[str]
 
     def __init__(
             self,
             pretrained_model_name_or_path: str,
             model_config: Mapping[str, Any],
+            model_device: Optional[str],
             tokenizer_config: Mapping[str, Any],
+            tokenizer_device: Optional[str],
             generate_config: Mapping[str, Any],
             decode_config: Mapping[str, Any]) -> None:
         self.model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path, **model_config).to(device)
+            pretrained_model_name_or_path, **model_config)
+        if model_device is not None:
+            self.model = self.model.to(model_device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             pretrained_model_name_or_path, **tokenizer_config)
         self.generate_config = generate_config
         self.decode_config = decode_config
+        self.tokenizer_device = tokenizer_device
 
     def completions(self, request) -> List[str]:
-        return _completions_auto(request, self.tokenizer, self.model, self.generate_config, self.decode_config, False)
+        return _completions_auto(request, self.tokenizer, self.tokenizer_device, self.model, self.generate_config, self.decode_config, False)
