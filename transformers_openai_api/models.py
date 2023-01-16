@@ -55,6 +55,7 @@ def _completions_auto(
     generate_args.pop('best_of', None)
     generate_args.pop('presence_penalty', None)
     generate_args.pop('frequency_penalty', None)
+    generate_args.pop('logit_bias', None)
 
     inputs = []
     prompt_tokens_count = 0
