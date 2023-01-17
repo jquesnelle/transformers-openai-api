@@ -62,11 +62,15 @@ The `MODELS` object handles mapping an OpenAI model name to a `transformers` mod
 
 #### Using accelerate
 
-To use [accelerate](https://github.com/huggingface/accelerate), set `device_map` on the `MODEL_CONFIG` to `auto` and explicitly set `MODEL_DEVICE` to `null`. The default model in [config.example.json](config.example.json) is an example of this.
+To use [accelerate](https://github.com/huggingface/accelerate), set `device_map` on the `MODEL_CONFIG` to `auto` and explicitly set `MODEL_DEVICE` to `null`. The default `text-davinci-003` model in [config.example.json](config.example.json) is an example of this.
 
 #### Using CPU
 
 To switch to CPU inference, set `MODEL_DEVICE` and `TOKENIZER_DEVICE` to `cpu`.
+
+#### Using FP16
+
+To use a model at half-precision, set `torch_dtype` on the `MODEL_CONFIG` to `torch_dtype`. The disabled `text-curie-001` model in [config.example.json](config.example.json) is an example of this.
 
 ### Authorization
 
