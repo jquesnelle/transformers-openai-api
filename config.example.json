@@ -6,10 +6,7 @@
             "MODEL_CONFIG": {
                 "device_map": "auto"
             },
-            "MODEL_DEVICE": null,
-            "GENERATE_CONFIG": {
-                "max_new_tokens": 512
-            }
+            "MODEL_DEVICE": null
         },
         "text-curie-001": {
             "ENABLED": false,
