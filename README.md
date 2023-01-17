@@ -54,10 +54,23 @@ The `MODELS` object handles mapping an OpenAI model name to a `transformers` mod
 | `ENABLED` | Boolean value to disable a model |
 | `TYPE` | Either "Seq2Seq" or "CausalLM" |
 | `MODEL_CONFIG` | Parameters for model creation; passed to `AutoModelForTYPE.from_pretrained` |
-| `TOKENIZIER_CONFIG` | Parameters for tokenizer creation; passed to `AutoTokenizer.from_pretrained` |
+| `MODEL_DEVICE` | Convert model to this device; passed to `to` called on the created model (default `cuda`) |
+| `TOKENIZER_CONFIG` | Parameters for tokenizer creation; passed to `AutoTokenizer.from_pretrained` |
+| `TOKENIZER_DEVICE` | Convert tokens to this device; passed to `to` called on the tokenized input (default `cuda`) |
 | `GENERATE_CONFIG` | Parameters for generation; passed to the model's `generate` function |
 | `DECODE_CONFIG` | Parameters for decoding; passed to the tokenizer's `decode` function |
 
+#### Using accelerate
+
+To use [accelerate](https://github.com/huggingface/accelerate), set `device_map` on the `MODEL_CONFIG` to `auto` and explicitly set `MODEL_DEVICE` to `null`. The default `text-davinci-003` model in [config.example.json](config.example.json) is an example of this.
+
+#### Using CPU
+
+To switch to CPU inference, set `MODEL_DEVICE` and `TOKENIZER_DEVICE` to `cpu`.
+
+#### Using FP16
+
+To use a model at half-precision, set `torch_dtype` on the `MODEL_CONFIG` to `torch_dtype`. The disabled `text-curie-001` model in [config.example.json](config.example.json) is an example of this.
 
 ### Authorization
 
