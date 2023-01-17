@@ -4,8 +4,9 @@
             "NAME": "google/flan-t5-base",
             "TYPE": "Seq2Seq",
             "MODEL_CONFIG": {
-                "torch_dtype": "float16"
+                "device_map": "auto"
             },
+            "MODEL_DEVICE": null,
             "GENERATE_CONFIG": {
                 "max_new_tokens": 512
             }
