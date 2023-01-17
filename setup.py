@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='transformers-openai-api',
     packages=["transformers_openai_api"],
-    version='1.0.2',
+    version='1.0.3',
     description='An OpenAI Completions API compatible server for NLP transformers models',
     author='Jeffrey Quesnelle',
     author_email='jq@jeffq.com',
